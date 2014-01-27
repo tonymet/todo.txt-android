@@ -3,6 +3,10 @@
 	<name>TodoTxtTouch</name>
 	<comment></comment>
 	<projects>
+		<project>ActionBar-PullToRefresh</project>
+		<project>ActionBar-PullToRefresh-extras</project>
+		<project>actionbarsherlock</project>
+		<project>chuckbjones-SwipeToDismissUndoList-ec6bf93</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
