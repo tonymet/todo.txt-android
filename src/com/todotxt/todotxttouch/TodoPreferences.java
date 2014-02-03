@@ -39,6 +39,8 @@ import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 public class TodoPreferences {
+	
+
 	final static String TAG = TodoPreferences.class.getSimpleName();
 
 	private SharedPreferences m_prefs;
@@ -60,6 +62,7 @@ public class TodoPreferences {
 	public static final String PREF_FILTER_PROJECTS = "filter_projects";
 	public static final String PREF_FILTER_SEARCH = "filter_search";
 	public static final String PREF_FILTER_SUMMARY = "filter_summary";
+	public static final String PREF_GOOGLE_DRIVE_RESOURCE_ID = "google_drive_resource_id";
 
 	/* Localizable defaults that should be defined in strings.xml */
 	private String todo_path_default;
@@ -72,6 +75,7 @@ public class TodoPreferences {
 	private String todo_path_key;
 	private String prepend_date_pref_key;
 	private String periodic_sync_pref_key;
+	private String google_drive_resource_id_default;
 
 	public TodoPreferences(Context c, SharedPreferences prefs) {
 		m_prefs = prefs;
@@ -81,6 +85,8 @@ public class TodoPreferences {
 		prepend_date_pref_key = c.getString(R.string.prepend_date_pref_key);
 		todo_path_key = c.getString(R.string.todo_path_key);
 		todo_path_default = c.getString(R.string.todo_path_default);
+		google_drive_resource_id_default = c.getString(R.string.google_drive_resource_id_default);
+		
 		// dump();
 	}
 
@@ -307,5 +313,24 @@ public class TodoPreferences {
 			Log.d("map values", entry.getKey() + ": "
 					+ entry.getValue().toString());
 		}
+	}
+
+	/**
+	 * @return the google_drive_resource_id
+	 */
+	public String getGoogleDriveResourceId() {
+		return m_prefs.getString(
+				PREF_GOOGLE_DRIVE_RESOURCE_ID, 
+				google_drive_resource_id_default
+		);
+	}
+
+	/**
+	 * @param google_drive_resource_id the google_drive_resource_id to set
+	 */
+	public void setGoogleDriveResourceId(String google_drive_resource_id) {
+		Editor editor = m_prefs.edit();
+		editor.putString(PREF_GOOGLE_DRIVE_RESOURCE_ID, google_drive_resource_id);
+		editor.commit();
 	}
 }

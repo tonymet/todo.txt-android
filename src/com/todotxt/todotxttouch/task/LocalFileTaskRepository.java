@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.todotxt.todotxttouch.TodoApplication;
@@ -50,7 +51,11 @@ class LocalFileTaskRepository implements LocalTaskRepository {
     final static File DONE_TXT_FILE = new File(
             TodoApplication.getAppContetxt().getFilesDir(),
             "done.txt");
-
+    private SharedPreferences m_prefs = null;
+    
+    public void LocalFileTaskRespository(SharedPreferences prefs){
+    	m_prefs = prefs;
+    }
     @Override
     public void init() {
         try {

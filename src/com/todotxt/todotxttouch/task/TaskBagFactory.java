@@ -34,9 +34,18 @@ import com.todotxt.todotxttouch.TodoPreferences;
  * @author Tim Barlotta
  */
 public class TaskBagFactory {
-    public static TaskBag getTaskBag(TodoApplication application,
+    private static final int ENABLE_GOOGLE_DRIVE = 0;
+
+	public static TaskBag getTaskBag(TodoApplication application,
             TodoPreferences sharedPreferences) {
-        LocalFileTaskRepository localFileTaskRepository = new LocalFileTaskRepository();
+    	LocalTaskRepository localFileTaskRepository = null;
+    	if(ENABLE_GOOGLE_DRIVE != 1){
+    		localFileTaskRepository = new LocalFileTaskRepository();
+    	}
+    	else{
+    		localFileTaskRepository = new GoogleDriveTaskRepository(application.m_prefs.getGoogleDriveResourceId(),
+    				application.getGoogleApiClient());
+    	}
         // TODO tonym implement localFileTaskRepository and RemoteClientManager to override work. 
         // insert hooks here
         return new TaskBagImpl(sharedPreferences, localFileTaskRepository,

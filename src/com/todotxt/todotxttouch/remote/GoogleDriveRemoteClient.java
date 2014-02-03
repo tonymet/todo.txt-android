@@ -6,6 +6,9 @@ package com.todotxt.todotxttouch.remote;
 import java.io.File;
 import java.util.List;
 
+import com.todotxt.todotxttouch.TodoApplication;
+import com.todotxt.todotxttouch.TodoPreferences;
+
 /**
  * @author tonym
  *
@@ -15,7 +18,8 @@ public class GoogleDriveRemoteClient implements RemoteClient {
 	/**
 	 * 
 	 */
-	public GoogleDriveRemoteClient() {
+	public GoogleDriveRemoteClient(TodoApplication todoApplication,
+            TodoPreferences sharedPreferences) {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -70,7 +74,7 @@ public class GoogleDriveRemoteClient implements RemoteClient {
 	@Override
 	public boolean isAuthenticated() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)

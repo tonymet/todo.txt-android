@@ -37,7 +37,8 @@ import com.todotxt.todotxttouch.TodoPreferences;
  */
 public class RemoteClientManager implements
         SharedPreferences.OnSharedPreferenceChangeListener {
-    // private final static String TAG =
+    private static final int ENABLE_GOOGLE_DRIVE = 0;
+	// private final static String TAG =
     // RemoteClientManager.class.getSimpleName();
     @SuppressWarnings("unused")
     private Client currentClientToken;
@@ -65,7 +66,12 @@ public class RemoteClientManager implements
      */
     private RemoteClient getRemoteClient(Client clientToken) {
     	//TODO: add hook here for google drive remote client
-        return new DropboxRemoteClient(todoApplication, sharedPreferences);
+    	if(ENABLE_GOOGLE_DRIVE != 1){
+    		return new DropboxRemoteClient(todoApplication, sharedPreferences);
+    	}
+    	else{
+    		return new GoogleDriveRemoteClient(todoApplication, sharedPreferences);
+    	}
     }
 
     @Override

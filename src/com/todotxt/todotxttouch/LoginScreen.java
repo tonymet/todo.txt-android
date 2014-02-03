@@ -29,6 +29,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,6 +41,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.todotxt.todotxttouch.remote.RemoteClient;
 import com.todotxt.todotxttouch.util.Util;
 
@@ -49,10 +52,11 @@ public class LoginScreen extends Activity
 	GoogleApiClient.OnConnectionFailedListener {
 	final static String TAG = LoginScreen.class.getSimpleName();
 
+	private static final int REQUEST_CODE_OPENER = 0x01;
+
 	private TodoApplication m_app;
 	private Button m_LoginButton;
-	private BroadcastReceiver m_broadcastReceiver;
-	public GoogleApiClient mGoogleApiClient;
+	private BroadcastReceiver m_broadcastReceiver; 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -102,15 +106,18 @@ public class LoginScreen extends Activity
 	@Override
     protected void onResume() {
         super.onResume();
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(Drive.API)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
+        if (m_app.getGoogleApiClient() == null) {
+            m_app.setGoogleApiClient(
+            		new GoogleApiClient.Builder(this)
+	                    .addApi(Drive.API)
+	                    .addScope(Drive.SCOPE_FILE)
+	                    .addConnectionCallbacks(this)
+	                    .addOnConnectionFailedListener(this)
+	                    .build()
+            );
         }
-        mGoogleApiClient.connect();
+        Log.i(TAG, "onResume(): reconnecting Google Drive");
+        m_app.getGoogleApiClient().connect();
         finishLogin();
     }
 
@@ -151,7 +158,20 @@ public class LoginScreen extends Activity
 	// tonym for google drive
 	   @Override
 	    public void onConnected(Bundle connectionHint) {
+		   // choose file for Google drive and save file id in local preferences
 	        Log.i(TAG, "GoogleApiClient connected");
+	        // pop file chooser and save to file location
+            IntentSender intentSender = Drive.DriveApi
+                    .newOpenFileActivityBuilder()
+                    //.setMimeType(new String[] { "application/vnd.google-apps.folder" })
+                    .setMimeType(new String[] { "text/plain" })
+                    .build(m_app.getGoogleApiClient());
+            try {
+                startIntentSenderForResult(
+                        intentSender, 0x01, null, 0, 0, 0);
+            } catch (SendIntentException e) {
+              Log.w(TAG, "Unable to send intent", e);
+            }
 	    }
 
 	    /**
@@ -174,6 +194,26 @@ public class LoginScreen extends Activity
 	            result.startResolutionForResult(this, 0x01);
 	        } catch (SendIntentException e) {
 	            Log.e(TAG, "Exception while starting resolution activity", e);
+	        }
+	    }
+	    
+	    @Override
+	    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	        switch(requestCode) {
+		        case REQUEST_CODE_OPENER:
+		            if (resultCode == RESULT_OK) {
+		                DriveId driveId = (DriveId) data.getParcelableExtra(
+		                        OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+		                Log.i(TAG,"Selected folder's ID: " + driveId);
+		                Log.i(TAG,"Selected folder's resource ID: " + driveId.getResourceId());
+		                m_app.m_prefs.setGoogleDriveResourceId(driveId.getResourceId());
+		            }
+		            finish();
+		            switchToTodolist();
+		            break;
+	        default:
+	        	Log.e(TAG, "Error requestCode not specified");
+	            break;
 	        }
 	    }
 

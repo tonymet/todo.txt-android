@@ -32,6 +32,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,6 +109,36 @@ public class TaskIo {
 
         return items;
     }
+    public static ArrayList<Task> loadTasksFromInputStream(InputStream is) throws IOException {
+        ArrayList<Task> items = new ArrayList<Task>();
+        BufferedReader in = null;
+        if (false) {
+         // do nothing
+        } else {
+            try {
+                in = new BufferedReader(new InputStreamReader(is));
+                String line;
+                long counter = 0L;
+                sWindowsLineBreaks = false;
+
+                while ((line = readLine(in)) != null) {
+                    line = line.trim();
+
+                    if (line.length() > 0) {
+                        items.add(new Task(counter, line));
+                    }
+
+                    counter++;
+                }
+            } finally {
+                Util.closeStream(in);
+                Util.closeStream(is);
+            }
+        }
+
+        return items;
+    }
+
 
     public static void writeToFile(List<Task> tasks, File file) {
         writeToFile(tasks, file, false);
@@ -120,6 +152,32 @@ public class TaskIo {
 
             Util.createParentDirectory(file);
             FileWriter fw = new FileWriter(file, append);
+
+            for (int i = 0; i < tasks.size(); ++i) {
+                String fileFormat = tasks.get(i).inFileFormat();
+                fw.write(fileFormat);
+
+                if (sWindowsLineBreaks) {
+                    // Log.v(TAG, "Using Windows line breaks");
+                    fw.write("\r\n");
+                } else {
+                    // Log.v(TAG, "NOT using Windows line breaks");
+                    fw.write("\n");
+                }
+            }
+
+            fw.close();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+    public static void writeToOutputStream(List<Task> tasks, OutputStream os) {
+        writeToOutputStream(tasks, os, false);
+    }
+
+    public static void writeToOutputStream(List<Task> tasks, OutputStream os, boolean append) {
+        try {
+            OutputStreamWriter fw = new OutputStreamWriter(os);
 
             for (int i = 0; i < tasks.size(); ++i) {
                 String fileFormat = tasks.get(i).inFileFormat();

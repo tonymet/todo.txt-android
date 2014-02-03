@@ -36,6 +36,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.todotxt.todotxttouch.remote.RemoteClientManager;
 import com.todotxt.todotxttouch.remote.RemoteConflictException;
 import com.todotxt.todotxttouch.task.Priority;
@@ -54,6 +55,7 @@ public class TodoApplication extends Application {
     private TaskBag taskBag;
     private BroadcastReceiver m_broadcastReceiver;
     private static Context appContext;
+    private GoogleApiClient mGoogleApiClient;
 
     // filter variables
     public ArrayList<Priority> m_prios = new ArrayList<Priority>();
@@ -402,4 +404,18 @@ public class TodoApplication extends Application {
         // split on tab just in case there is a space in the text
         m_filters = m_prefs.getFilterSummaries();
     }
+
+	/**
+	 * @return the mGoogleApiClient
+	 */
+	public GoogleApiClient getGoogleApiClient() {
+		return mGoogleApiClient;
+	}
+
+	/**
+	 * @param mGoogleApiClient the mGoogleApiClient to set
+	 */
+	public void setGoogleApiClient(GoogleApiClient mGoogleApiClient) {
+		this.mGoogleApiClient = mGoogleApiClient;
+	}
 }
