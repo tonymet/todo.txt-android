@@ -29,21 +29,30 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.drive.Drive;
 import com.todotxt.todotxttouch.remote.RemoteClient;
 import com.todotxt.todotxttouch.util.Util;
 
-public class LoginScreen extends Activity {
+public class LoginScreen extends Activity 
+	implements 
+	GoogleApiClient.ConnectionCallbacks,
+	GoogleApiClient.OnConnectionFailedListener {
 	final static String TAG = LoginScreen.class.getSimpleName();
 
 	private TodoApplication m_app;
 	private Button m_LoginButton;
 	private BroadcastReceiver m_broadcastReceiver;
+	public GoogleApiClient mGoogleApiClient;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,13 +100,19 @@ public class LoginScreen extends Activity {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-
-		Log.i(TAG, "LoginScreen onResume");
-
-		finishLogin();
-	}
+    protected void onResume() {
+        super.onResume();
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+        mGoogleApiClient.connect();
+        finishLogin();
+    }
 
 	private void finishLogin() {
 		RemoteClient remoteClient = m_app.getRemoteClientManager()
@@ -133,4 +148,33 @@ public class LoginScreen extends Activity {
 			client.startLogin();
 		}
 	}
+	// tonym for google drive
+	   @Override
+	    public void onConnected(Bundle connectionHint) {
+	        Log.i(TAG, "GoogleApiClient connected");
+	    }
+
+	    /**
+	     * Called when {@code mGoogleApiClient} is disconnected.
+	     */
+	    @Override
+	    public void onDisconnected() {
+	        Log.i(TAG, "GoogleApiClient disconnected");
+	    }
+	    @Override
+	    public void onConnectionFailed(ConnectionResult result) {
+	        Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
+	        if (!result.hasResolution()) {
+	            // show the localized error dialog.
+	            GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), this, 0).show();
+	            return;
+	        }
+	        try {
+	        	// todo tonym update 2nd argument to something meaninful
+	            result.startResolutionForResult(this, 0x01);
+	        } catch (SendIntentException e) {
+	            Log.e(TAG, "Exception while starting resolution activity", e);
+	        }
+	    }
+
 }

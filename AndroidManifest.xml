@@ -166,6 +166,9 @@ You should have received a copy of the GNU General Public License along with Tod
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service android:name=".SyncerService" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

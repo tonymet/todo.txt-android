@@ -313,6 +313,8 @@ public class TodoLocationPreference extends DialogPreference {
     }
 
     private void getRemoteDirectoryListing(final Tree<RemoteFolder> folder) {
+    	// TODO tonym override preference for Gdrive support to call gdrive intent. 
+    	// for now just force location of file
         new AsyncTask<Void, Void, List<RemoteFolder>>() {
             @Override
             protected void onPreExecute() {
@@ -322,6 +324,7 @@ public class TodoLocationPreference extends DialogPreference {
 
             @Override
             protected List<RemoteFolder> doInBackground(Void... params) {
+            
                 try {
                     return mApp.getRemoteClientManager().getRemoteClient()
                             .getSubFolders(folder.getData().getPath());

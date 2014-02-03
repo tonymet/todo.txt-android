@@ -37,7 +37,8 @@ public class TaskBagFactory {
     public static TaskBag getTaskBag(TodoApplication application,
             TodoPreferences sharedPreferences) {
         LocalFileTaskRepository localFileTaskRepository = new LocalFileTaskRepository();
-
+        // TODO tonym implement localFileTaskRepository and RemoteClientManager to override work. 
+        // insert hooks here
         return new TaskBagImpl(sharedPreferences, localFileTaskRepository,
                 application.getRemoteClientManager());
     }

@@ -1140,7 +1140,7 @@ public class TodoTxtTouch extends SherlockListActivity implements
 			upDownChoice.setNegativeButton(R.string.sync_dialog_download,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface arg0, int arg1) {
-							Log.v(TAG, "User selected PULL");
+							Log.v(TAG, "User selected PsyncClientULL");
 
 							sendBroadcast(new Intent(
 									Constants.INTENT_START_SYNC_FROM_REMOTE)
@@ -1500,6 +1500,7 @@ public class TodoTxtTouch extends SherlockListActivity implements
 	}
 
 	private void updateSyncUI(boolean redrawList) {
+		// TODO tonym sync & refresh UI
 		if (redrawList) {
 			m_pullToRefreshAttacher.setRefreshComplete();
 			// hide action bar

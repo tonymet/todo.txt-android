@@ -64,6 +64,7 @@ public class RemoteClientManager implements
      * @return
      */
     private RemoteClient getRemoteClient(Client clientToken) {
+    	//TODO: add hook here for google drive remote client
         return new DropboxRemoteClient(todoApplication, sharedPreferences);
     }
 
@@ -73,6 +74,7 @@ public class RemoteClientManager implements
     }
 
     private void calculateRemoteClient(TodoPreferences sharedPreferences) {
+    	// TODO switch here to determine proper client based off prefs
         currentClient = getRemoteClient(Client.DROPBOX);
         currentClientToken = Client.DROPBOX;
     }
